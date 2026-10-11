@@ -9,7 +9,7 @@
 
 **A now-playing mini media player docked in the Home Assistant sidebar, on every page.** It finds whatever is playing, Music Assistant included, with no configuration, and gives you play/pause, skip and volume without opening a dashboard.
 
-![Sidebar Mini Player in the Home Assistant sidebar: a now-playing card with artwork, track, artist, play/pause, skip, progress bar and volume slider, above Settings](docs/images/hero.png)
+![Sidebar Mini Player in the Home Assistant sidebar: a now-playing card with artwork, track, artist, play/pause, skip, progress bar and volume slider, above Settings](https://raw.githubusercontent.com/evski/ha-sidebar-mini-player/main/docs/images/hero.png)
 
 <sub>Composite image: an illustrative sidebar and dashboard frame around a real screenshot of the player. Names and artwork are placeholders.</sub>
 
@@ -44,7 +44,7 @@
 - **Theme friendly.** Uses your theme's colours, light or dark, with optional CSS variables for the accent colour, card background and corners.
 - **Lightweight.** One small vanilla JavaScript file with no dependencies, no build step, no entities and no backend.
 
-![Several media players in the Home Assistant sidebar: a slim collapsed card for a radio show above the focused card for a music track](docs/images/multi.png)
+![Several media players in the Home Assistant sidebar: a slim collapsed card for a radio show above the focused card for a music track](https://raw.githubusercontent.com/evski/ha-sidebar-mini-player/main/docs/images/multi.png)
 
 <sub>Real screenshot (iOS companion app). Track names, room names and artwork have been replaced with placeholders.</sub>
 
@@ -173,7 +173,7 @@ Swiping is turned off in the collapsed (icons-only) sidebar, where the card is t
 - Vertical swipes still scroll the sidebar as normal.
 - Dismissals are stored per device. Dismissing on your phone doesn't hide the player on your laptop.
 
-![Sidebar Mini Player in the Home Assistant iOS companion app: a collapsed card above the focused now-playing card with play/pause, skip and volume](docs/images/mobile.png)
+![Sidebar Mini Player in the Home Assistant iOS companion app: a collapsed card above the focused now-playing card with play/pause, skip and volume](https://raw.githubusercontent.com/evski/ha-sidebar-mini-player/main/docs/images/mobile.png)
 
 <sub>Real screenshot (iOS companion app). Track names, room names and artwork have been replaced with placeholders.</sub>
 
