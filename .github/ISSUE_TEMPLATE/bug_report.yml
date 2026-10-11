@@ -1,0 +1,73 @@
+name: Bug report
+description: Something isn't working as expected
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report. Please remove anything private (addresses, tokens, names) from logs and screenshots.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you expect, and what happened instead?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Play something on media_player.example
+        2. Open the sidebar on ...
+        3. ...
+  - type: input
+    id: version
+    attributes:
+      label: Sidebar Mini Player version
+      description: Run `window.__sidebarMiniPlayerLoaded` in the browser console
+      placeholder: "1.0.0"
+    validations:
+      required: true
+  - type: input
+    id: ha
+    attributes:
+      label: Home Assistant version
+      placeholder: "2026.10.1"
+    validations:
+      required: true
+  - type: dropdown
+    id: loading
+    attributes:
+      label: How is the module loaded?
+      options:
+        - frontend extra_module_url
+        - Dashboard resource (HACS default)
+        - Both
+        - Not sure
+    validations:
+      required: true
+  - type: input
+    id: client
+    attributes:
+      label: Browser or app
+      placeholder: "iOS companion app 2026.x / Chrome 140 on Windows / ..."
+    validations:
+      required: true
+  - type: input
+    id: integration
+    attributes:
+      label: Media player integration(s)
+      placeholder: "Music Assistant, Sonos, Apple TV, Cast, ..."
+  - type: textarea
+    id: attributes
+    attributes:
+      label: Entity state and attributes (optional)
+      description: From Developer tools → States. Redact anything private.
+      render: yaml
+  - type: textarea
+    id: console
+    attributes:
+      label: Console output (optional)
+      description: Lines starting with [sidebar-mini-player]
+      render: text

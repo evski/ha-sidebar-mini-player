@@ -1,0 +1,12 @@
+node_modules/
+npm-debug.log*
+.DS_Store
+Thumbs.db
+*.log
+.vscode/
+.idea/
+coverage/
+# private material must never be committed
+*.raw.png
+secrets*.yaml
+.env

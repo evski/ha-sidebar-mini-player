@@ -1,0 +1,517 @@
+{
+ "media_player.office": {
+  "entity_id": "media_player.office",
+  "state": "playing",
+  "attributes": {
+   "group_members": [],
+   "app_id": "music_assistant",
+   "source": "Music Assistant Queue",
+   "shuffle": false,
+   "repeat": "off",
+   "mass_player_type": "player",
+   "device_class": "speaker",
+   "icon": "mdi:speaker",
+   "volume_level": 0.79,
+   "is_volume_muted": false,
+   "media_content_id": "library://track/1",
+   "media_content_type": "music",
+   "media_duration": 278,
+   "media_position": 87,
+   "media_position_updated_at": "2026-10-10T16:39:58.000000+00:00",
+   "media_title": "Example Track",
+   "media_artist": "Example Artist",
+   "media_album_name": "Example Album",
+   "media_album_artist": "Example Artist",
+   "active_queue": "queue_office",
+   "entity_picture_local": "/api/media_player_proxy/media_player.office?token=test&cache=test",
+   "entity_picture": "http://192.0.2.10:8095/imageproxy/example?size=512&fmt=jpg",
+   "friendly_name": "OFFICE",
+   "supported_features": 8320959
+  },
+  "last_changed": "2026-10-10T16:37:54.000000+00:00",
+  "last_reported": "2026-10-10T16:37:54.000000+00:00",
+  "last_updated": "2026-10-10T16:37:54.000000+00:00",
+  "context": {
+   "id": "TESTCONTEXT",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ "media_player.kitchen": {
+  "entity_id": "media_player.kitchen",
+  "state": "idle",
+  "attributes": {
+   "volume_level": 0.33,
+   "friendly_name": "KITCHEN",
+   "supported_features": 137093
+  },
+  "last_changed": "2026-10-10T16:12:00.000000+00:00",
+  "last_reported": "2026-10-10T16:12:00.000000+00:00",
+  "last_updated": "2026-10-10T16:12:00.000000+00:00",
+  "context": {
+   "id": "TESTCONTEXT",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ "media_player.kitchen_2": {
+  "entity_id": "media_player.kitchen_2",
+  "state": "idle",
+  "attributes": {
+   "group_members": [],
+   "app_id": "music_assistant",
+   "source": "Music Assistant Queue",
+   "shuffle": false,
+   "repeat": "off",
+   "mass_player_type": "player",
+   "device_class": "speaker",
+   "icon": "mdi:speaker",
+   "volume_level": 0.3,
+   "media_content_id": "library://radio/1",
+   "media_content_type": "music",
+   "media_duration": 0,
+   "media_position": 0,
+   "media_position_updated_at": "2026-10-10T16:12:00.000000+00:00",
+   "media_title": "Radio Station One",
+   "active_queue": "queue_kitchen",
+   "entity_picture_local": "/api/media_player_proxy/media_player.kitchen_2?token=test&cache=test",
+   "entity_picture": "http://192.0.2.10:8095/imageproxy/radio?size=512&fmt=png",
+   "friendly_name": "KITCHEN",
+   "supported_features": 8320575
+  },
+  "last_changed": "2026-10-10T16:12:00.000000+00:00",
+  "last_reported": "2026-10-10T16:12:00.000000+00:00",
+  "last_updated": "2026-10-10T16:12:00.000000+00:00",
+  "context": {
+   "id": "TESTCONTEXT",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ "media_player.living_room": {
+  "entity_id": "media_player.living_room",
+  "state": "off",
+  "attributes": {
+   "friendly_name": "LIVING ROOM",
+   "supported_features": 450487
+  },
+  "last_changed": "2026-10-10T16:12:00.000000+00:00",
+  "last_reported": "2026-10-10T16:12:00.000000+00:00",
+  "last_updated": "2026-10-10T16:12:00.000000+00:00",
+  "context": {
+   "id": "TESTCONTEXT",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ "media_player.living_room_2": {
+  "entity_id": "media_player.living_room_2",
+  "state": "idle",
+  "attributes": {
+   "group_members": [],
+   "app_id": "music_assistant",
+   "source": "Music Assistant Queue",
+   "shuffle": false,
+   "repeat": "off",
+   "mass_player_type": "player",
+   "device_class": "speaker",
+   "icon": "mdi:speaker",
+   "volume_level": 0.12,
+   "media_title": "Old Song",
+   "media_artist": "Someone",
+   "media_duration": 232,
+   "media_position": 226,
+   "media_position_updated_at": "2026-10-10T16:12:00.000000+00:00",
+   "friendly_name": "LIVING ROOM",
+   "supported_features": 8320575
+  },
+  "last_changed": "2026-10-10T16:12:00.000000+00:00",
+  "last_reported": "2026-10-10T16:12:00.000000+00:00",
+  "last_updated": "2026-10-10T16:12:00.000000+00:00",
+  "context": {
+   "id": "TESTCONTEXT",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ "media_player.lounge_tv": {
+  "entity_id": "media_player.lounge_tv",
+  "state": "playing",
+  "attributes": {
+   "media_position_updated_at": "2026-10-10T16:12:00.000000+00:00",
+   "app_id": "com.netflix.Netflix",
+   "app_name": "Netflix",
+   "friendly_name": "Lounge TV",
+   "supported_features": 450487
+  },
+  "last_changed": "2026-10-10T16:37:09.000000+00:00",
+  "last_reported": "2026-10-10T16:37:09.000000+00:00",
+  "last_updated": "2026-10-10T16:37:09.000000+00:00",
+  "context": {
+   "id": "TESTCONTEXT",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ "media_player.bedroom": {
+  "entity_id": "media_player.bedroom",
+  "state": "idle",
+  "attributes": {
+   "group_members": [],
+   "app_id": "music_assistant",
+   "source": "Music Assistant Queue",
+   "shuffle": false,
+   "repeat": "off",
+   "mass_player_type": "player",
+   "device_class": "speaker",
+   "icon": "mdi:speaker",
+   "volume_level": 0.2,
+   "media_content_id": "library://radio/1",
+   "media_content_type": "music",
+   "media_duration": 0,
+   "media_position": 0,
+   "media_position_updated_at": "2026-10-10T16:12:00.000000+00:00",
+   "media_title": "Radio Station One",
+   "active_queue": "queue_bedroom",
+   "entity_picture_local": "/api/media_player_proxy/media_player.bedroom?token=test&cache=test",
+   "friendly_name": "Bedroom",
+   "supported_features": 8320575
+  },
+  "last_changed": "2026-10-10T16:12:00.000000+00:00",
+  "last_reported": "2026-10-10T16:12:00.000000+00:00",
+  "last_updated": "2026-10-10T16:12:00.000000+00:00",
+  "context": {
+   "id": "TESTCONTEXT",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ "media_player.av_receiver": {
+  "entity_id": "media_player.av_receiver",
+  "state": "off",
+  "attributes": {
+   "icon": "mdi:audio-video",
+   "friendly_name": "AV Receiver",
+   "supported_features": 200588,
+   "device_class": "receiver"
+  },
+  "last_changed": "2026-10-10T16:12:00.000000+00:00",
+  "last_reported": "2026-10-10T16:12:00.000000+00:00",
+  "last_updated": "2026-10-10T16:12:00.000000+00:00",
+  "context": {
+   "id": "TESTCONTEXT",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ "media_player.lounge_webos_tv": {
+  "entity_id": "media_player.lounge_webos_tv",
+  "state": "on",
+  "attributes": {
+   "volume_level": 0.16,
+   "is_volume_muted": false,
+   "source": "HDMI3",
+   "device_class": "tv",
+   "friendly_name": "Lounge webOS TV",
+   "supported_features": 24381
+  },
+  "last_changed": "2026-10-10T16:12:00.000000+00:00",
+  "last_reported": "2026-10-10T16:12:00.000000+00:00",
+  "last_updated": "2026-10-10T16:12:00.000000+00:00",
+  "context": {
+   "id": "TESTCONTEXT",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ "media_player.kodi": {
+  "entity_id": "media_player.kodi",
+  "state": "off",
+  "attributes": {
+   "friendly_name": "Kodi",
+   "supported_features": 186303
+  },
+  "last_changed": "2026-10-10T16:12:00.000000+00:00",
+  "last_reported": "2026-10-10T16:12:00.000000+00:00",
+  "last_updated": "2026-10-10T16:12:00.000000+00:00",
+  "context": {
+   "id": "TESTCONTEXT",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ "media_player.den_chromecast": {
+  "entity_id": "media_player.den_chromecast",
+  "state": "unavailable",
+  "attributes": {
+   "friendly_name": "Den Chromecast",
+   "supported_features": 152463
+  },
+  "last_changed": "2026-10-10T16:12:00.000000+00:00",
+  "last_reported": "2026-10-10T16:12:00.000000+00:00",
+  "last_updated": "2026-10-10T16:12:00.000000+00:00",
+  "context": {
+   "id": "TESTCONTEXT",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ "media_player.bathroom_sonos": {
+  "entity_id": "media_player.bathroom_sonos",
+  "state": "unavailable",
+  "attributes": {
+   "restored": true,
+   "device_class": "speaker",
+   "friendly_name": "Bathroom",
+   "supported_features": 8320575
+  },
+  "last_changed": "2026-10-10T16:12:00.000000+00:00",
+  "last_reported": "2026-10-10T16:12:00.000000+00:00",
+  "last_updated": "2026-10-10T16:12:00.000000+00:00",
+  "context": {
+   "id": "TESTCONTEXT",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ "media_player.spotify_example": {
+  "entity_id": "media_player.spotify_example",
+  "state": "idle",
+  "attributes": {
+   "friendly_name": "Spotify Example",
+   "supported_features": 2079,
+   "source_list": [
+    "Example Phone"
+   ]
+  },
+  "last_changed": "2026-10-10T16:12:00.000000+00:00",
+  "last_reported": "2026-10-10T16:12:00.000000+00:00",
+  "last_updated": "2026-10-10T16:12:00.000000+00:00",
+  "context": {
+   "id": "TESTCONTEXT",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ "media_player.games_console": {
+  "entity_id": "media_player.games_console",
+  "state": "off",
+  "attributes": {
+   "icon": "mdi:controller-off",
+   "friendly_name": "Games Console",
+   "supported_features": 23296
+  },
+  "last_changed": "2026-10-10T16:12:00.000000+00:00",
+  "last_reported": "2026-10-10T16:12:00.000000+00:00",
+  "last_updated": "2026-10-10T16:12:00.000000+00:00",
+  "context": {
+   "id": "TESTCONTEXT",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ "media_player.browser_mod_0000abcd_0000ef89": {
+  "entity_id": "media_player.browser_mod_0000abcd_0000ef89",
+  "state": "off",
+  "attributes": {
+   "type": "browser_mod",
+   "friendly_name": "browser_mod_0000abcd_0000ef89",
+   "supported_features": 152463
+  },
+  "last_changed": "2026-10-10T16:12:00.000000+00:00",
+  "last_reported": "2026-10-10T16:12:00.000000+00:00",
+  "last_updated": "2026-10-10T16:12:00.000000+00:00",
+  "context": {
+   "id": "TESTCONTEXT",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ "media_player.browser_mod_0001abcd_0001ef89": {
+  "entity_id": "media_player.browser_mod_0001abcd_0001ef89",
+  "state": "unavailable",
+  "attributes": {
+   "type": "browser_mod",
+   "friendly_name": "browser_mod_0001abcd_0001ef89",
+   "supported_features": 152463
+  },
+  "last_changed": "2026-10-10T16:12:00.000000+00:00",
+  "last_reported": "2026-10-10T16:12:00.000000+00:00",
+  "last_updated": "2026-10-10T16:12:00.000000+00:00",
+  "context": {
+   "id": "TESTCONTEXT",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ "media_player.browser_mod_0002abcd_0002ef89": {
+  "entity_id": "media_player.browser_mod_0002abcd_0002ef89",
+  "state": "unavailable",
+  "attributes": {
+   "type": "browser_mod",
+   "friendly_name": "browser_mod_0002abcd_0002ef89",
+   "supported_features": 152463
+  },
+  "last_changed": "2026-10-10T16:12:00.000000+00:00",
+  "last_reported": "2026-10-10T16:12:00.000000+00:00",
+  "last_updated": "2026-10-10T16:12:00.000000+00:00",
+  "context": {
+   "id": "TESTCONTEXT",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ "media_player.browser_mod_0003abcd_0003ef89": {
+  "entity_id": "media_player.browser_mod_0003abcd_0003ef89",
+  "state": "unavailable",
+  "attributes": {
+   "type": "browser_mod",
+   "friendly_name": "browser_mod_0003abcd_0003ef89",
+   "supported_features": 152463
+  },
+  "last_changed": "2026-10-10T16:12:00.000000+00:00",
+  "last_reported": "2026-10-10T16:12:00.000000+00:00",
+  "last_updated": "2026-10-10T16:12:00.000000+00:00",
+  "context": {
+   "id": "TESTCONTEXT",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ "media_player.browser_mod_0004abcd_0004ef89": {
+  "entity_id": "media_player.browser_mod_0004abcd_0004ef89",
+  "state": "unavailable",
+  "attributes": {
+   "type": "browser_mod",
+   "friendly_name": "browser_mod_0004abcd_0004ef89",
+   "supported_features": 152463
+  },
+  "last_changed": "2026-10-10T16:12:00.000000+00:00",
+  "last_reported": "2026-10-10T16:12:00.000000+00:00",
+  "last_updated": "2026-10-10T16:12:00.000000+00:00",
+  "context": {
+   "id": "TESTCONTEXT",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ "media_player.browser_mod_0005abcd_0005ef89": {
+  "entity_id": "media_player.browser_mod_0005abcd_0005ef89",
+  "state": "unavailable",
+  "attributes": {
+   "type": "browser_mod",
+   "friendly_name": "browser_mod_0005abcd_0005ef89",
+   "supported_features": 152463
+  },
+  "last_changed": "2026-10-10T16:12:00.000000+00:00",
+  "last_reported": "2026-10-10T16:12:00.000000+00:00",
+  "last_updated": "2026-10-10T16:12:00.000000+00:00",
+  "context": {
+   "id": "TESTCONTEXT",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ "media_player.browser_mod_0006abcd_0006ef89": {
+  "entity_id": "media_player.browser_mod_0006abcd_0006ef89",
+  "state": "unavailable",
+  "attributes": {
+   "type": "browser_mod",
+   "friendly_name": "browser_mod_0006abcd_0006ef89",
+   "supported_features": 152463
+  },
+  "last_changed": "2026-10-10T16:12:00.000000+00:00",
+  "last_reported": "2026-10-10T16:12:00.000000+00:00",
+  "last_updated": "2026-10-10T16:12:00.000000+00:00",
+  "context": {
+   "id": "TESTCONTEXT",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ "media_player.browser_mod_0007abcd_0007ef89": {
+  "entity_id": "media_player.browser_mod_0007abcd_0007ef89",
+  "state": "unavailable",
+  "attributes": {
+   "type": "browser_mod",
+   "friendly_name": "browser_mod_0007abcd_0007ef89",
+   "supported_features": 152463
+  },
+  "last_changed": "2026-10-10T16:12:00.000000+00:00",
+  "last_reported": "2026-10-10T16:12:00.000000+00:00",
+  "last_updated": "2026-10-10T16:12:00.000000+00:00",
+  "context": {
+   "id": "TESTCONTEXT",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ "media_player.browser_mod_0008abcd_0008ef89": {
+  "entity_id": "media_player.browser_mod_0008abcd_0008ef89",
+  "state": "unavailable",
+  "attributes": {
+   "type": "browser_mod",
+   "friendly_name": "browser_mod_0008abcd_0008ef89",
+   "supported_features": 152463
+  },
+  "last_changed": "2026-10-10T16:12:00.000000+00:00",
+  "last_reported": "2026-10-10T16:12:00.000000+00:00",
+  "last_updated": "2026-10-10T16:12:00.000000+00:00",
+  "context": {
+   "id": "TESTCONTEXT",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ "media_player.browser_mod_0009abcd_0009ef89": {
+  "entity_id": "media_player.browser_mod_0009abcd_0009ef89",
+  "state": "unavailable",
+  "attributes": {
+   "type": "browser_mod",
+   "friendly_name": "browser_mod_0009abcd_0009ef89",
+   "supported_features": 152463
+  },
+  "last_changed": "2026-10-10T16:12:00.000000+00:00",
+  "last_reported": "2026-10-10T16:12:00.000000+00:00",
+  "last_updated": "2026-10-10T16:12:00.000000+00:00",
+  "context": {
+   "id": "TESTCONTEXT",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ "media_player.browser_mod_000aabcd_000aef89": {
+  "entity_id": "media_player.browser_mod_000aabcd_000aef89",
+  "state": "unavailable",
+  "attributes": {
+   "type": "browser_mod",
+   "friendly_name": "browser_mod_000aabcd_000aef89",
+   "supported_features": 152463
+  },
+  "last_changed": "2026-10-10T16:12:00.000000+00:00",
+  "last_reported": "2026-10-10T16:12:00.000000+00:00",
+  "last_updated": "2026-10-10T16:12:00.000000+00:00",
+  "context": {
+   "id": "TESTCONTEXT",
+   "parent_id": null,
+   "user_id": null
+  }
+ },
+ "media_player.browser_mod_000babcd_000bef89": {
+  "entity_id": "media_player.browser_mod_000babcd_000bef89",
+  "state": "unavailable",
+  "attributes": {
+   "type": "browser_mod",
+   "friendly_name": "browser_mod_000babcd_000bef89",
+   "supported_features": 152463
+  },
+  "last_changed": "2026-10-10T16:12:00.000000+00:00",
+  "last_reported": "2026-10-10T16:12:00.000000+00:00",
+  "last_updated": "2026-10-10T16:12:00.000000+00:00",
+  "context": {
+   "id": "TESTCONTEXT",
+   "parent_id": null,
+   "user_id": null
+  }
+ }
+}

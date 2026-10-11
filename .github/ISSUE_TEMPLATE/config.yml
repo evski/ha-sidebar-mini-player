@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Questions and ideas (Discussions)
+    url: https://github.com/Evski/ha-sidebar-mini-player/discussions
+    about: Ask a question or share your setup
+  - name: Security issue
+    url: https://github.com/Evski/ha-sidebar-mini-player/security/advisories/new
+    about: Report a vulnerability privately

@@ -1,0 +1,26 @@
+name: Works / doesn't work with my integration
+description: Tell us how the player behaves with a specific media player integration
+labels: ["compatibility"]
+body:
+  - type: input
+    id: integration
+    attributes:
+      label: Integration
+      placeholder: "Sonos / Spotify / Google Cast / Kodi / Plex / ..."
+    validations:
+      required: true
+  - type: dropdown
+    id: result
+    attributes:
+      label: Result
+      options:
+        - Works fully
+        - Works partly
+        - Doesn't work
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      description: What works, what doesn't (artwork, volume, skip, dedupe…). Include HA and player versions.

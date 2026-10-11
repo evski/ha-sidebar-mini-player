@@ -1,0 +1,15 @@
+# Sidebar Mini Player - configuration.yaml examples.
+# Pick ONE of the module lines below, depending on how you installed it.
+
+frontend:
+  extra_module_url:
+    # Installed with HACS (recommended):
+    - /hacsfiles/ha-sidebar-mini-player/ha-sidebar-mini-player.js?v=1.0.0
+    # Manual install (file copied to /config/www/):
+    # - /local/ha-sidebar-mini-player.js?v=1.0.0
+    # Optional settings file (see examples/sidebar-mini-player-config.js):
+    # - /local/sidebar-mini-player-config.js?v=1
+
+# After adding or changing extra_module_url: restart Home Assistant, then
+# refresh the browser (or reset the frontend cache in the companion app).
+# After updating the player, bump ?v=... so cached copies are replaced.
