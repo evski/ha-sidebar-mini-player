@@ -15,3 +15,7 @@ updates:
     groups:
       npm:
         patterns: ["*"]
+    ignore:
+      # jsdom 25+ needs Node 22; CI still tests Node 20
+      - dependency-name: jsdom
+        update-types: ["version-update:semver-major"]
