@@ -751,6 +751,51 @@ function setup(layoutHtml, statesFile = FIXTURE, prep = null, opts = {}) {
       c.t.w.close();
     }
 
+    // show_shuffle / show_repeat: buttons left of prev / right of next
+    {
+      const SH = 32768, RP = 262144;
+      const setAttrs = (t, id, attrs) => { const o = t.states[id]; t.states[id] = { ...o, attributes: { ...o.attributes, ...attrs } }; };
+      const focus = (c) => c.R.querySelector(".focus .controls");
+      const btn = (c, act) => focus(c).querySelector(`[data-act="${act}"]`);
+      // default: no buttons shown even for supporting players
+      c = await open(undefined);
+      setAttrs(c.t, "media_player.office", { supported_features: SH | RP | 1, shuffle: true, repeat: "all" }); await sleep(1200);
+      check("C13 default: shuffle/repeat hidden", btn(c, "shuffle").hidden && btn(c, "repeat").hidden);
+      c.t.w.close();
+      c = await open({ show_shuffle: true, show_repeat: true });
+      setAttrs(c.t, "media_player.office", { supported_features: SH | RP | 1, shuffle: true, repeat: "all" }); await sleep(1200);
+      const kids = [...focus(c).children].map((n) => n.dataset.act);
+      check("C13 order: shuffle, prev, playpause, next, repeat", kids.join(",") === "shuffle,prev,playpause,next,repeat", kids.join(","));
+      check("C13 both visible + active (on) for supporting player", !btn(c, "shuffle").hidden && !btn(c, "repeat").hidden && btn(c, "shuffle").classList.contains("on") && btn(c, "repeat").classList.contains("on"));
+      btn(c, "shuffle").click(); await sleep(50);
+      check("C13 shuffle click: shuffle_set shuffle=false (was on)", c.t.calls.some((x) => x[1] === "shuffle_set" && x[2] === JSON.stringify({ entity_id: "media_player.office", shuffle: false })), JSON.stringify(c.t.calls));
+      btn(c, "repeat").click(); await sleep(50);
+      check("C13 repeat click: all -> one", c.t.calls.some((x) => x[1] === "repeat_set" && x[2] === JSON.stringify({ entity_id: "media_player.office", repeat: "one" })), JSON.stringify(c.t.calls));
+      setAttrs(c.t, "media_player.office", { shuffle: false, repeat: "one" }); await sleep(1200);
+      check("C13 state shown: shuffle off, repeat one (once icon, on)", !btn(c, "shuffle").classList.contains("on") && btn(c, "repeat").classList.contains("on") && btn(c, "repeat").title === "Repeat: one" && btn(c, "repeat").dataset.icon === "repeatOnce-on", btn(c, "repeat").dataset.icon);
+      c.t.calls.length = 0; btn(c, "repeat").click(); await sleep(50);
+      check("C13 repeat click: one -> off", c.t.calls.some((x) => x[2] === JSON.stringify({ entity_id: "media_player.office", repeat: "off" })), JSON.stringify(c.t.calls));
+      setAttrs(c.t, "media_player.office", { repeat: "off" }); await sleep(1200);
+      c.t.calls.length = 0; btn(c, "repeat").click(); await sleep(50);
+      check("C13 repeat click: off -> all", c.t.calls.some((x) => x[2] === JSON.stringify({ entity_id: "media_player.office", repeat: "all" })), JSON.stringify(c.t.calls));
+      // collapsed (mini) card gets them too, and a mini click targets ITS entity
+      setAttrs(c.t, "media_player.lounge_tv", { supported_features: SH | 1, shuffle: false }); await sleep(1200);
+      const mini = c.R.querySelector('.mini[data-entity="media_player.lounge_tv"]');
+      const msh = mini.querySelector('[data-act="shuffle"]');
+      check("C13 mini card: shuffle shown, repeat hidden (not supported)", !msh.hidden && mini.querySelector('[data-act="repeat"]').hidden);
+      c.t.calls.length = 0; msh.click(); await sleep(50);
+      check("C13 mini shuffle click targets lounge_tv, shuffle=true", c.t.calls.some((x) => x[1] === "shuffle_set" && x[2] === JSON.stringify({ entity_id: "media_player.lounge_tv", shuffle: true })), JSON.stringify(c.t.calls));
+      // unsupported player: hidden even when enabled
+      setAttrs(c.t, "media_player.office", { supported_features: 1 }); await sleep(1200);
+      check("C13 unsupported player: both hidden", btn(c, "shuffle").hidden && btn(c, "repeat").hidden);
+      // each option works on its own
+      c.t.w.sidebarMiniPlayerConfig = { show_shuffle: true }; setAttrs(c.t, "media_player.office", { supported_features: SH | RP | 1 }); await sleep(1200);
+      check("C13 show_shuffle only: repeat hidden", !btn(c, "shuffle").hidden && btn(c, "repeat").hidden);
+      c.t.w.sidebarMiniPlayerConfig = { show_repeat: true }; await sleep(1200);
+      check("C13 show_repeat only: shuffle hidden", btn(c, "shuffle").hidden && !btn(c, "repeat").hidden);
+      c.t.w.close();
+    }
+
     // dedupe off -> native twin shows
     c = await open({ dedupe_music_assistant: false });
     check("C6 dedupe_music_assistant false: native twin (kitchen) shown", c.ids().includes("media_player.kitchen") && c.ids().length === 4, c.ids().join(","));

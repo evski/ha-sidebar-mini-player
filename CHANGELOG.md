@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `show_shuffle` and `show_repeat` options (default `false`): shuffle button left
+  of previous and repeat button (off / all / one) right of next, on the focused
+  and the collapsed cards, for players that support them.
 - `idle_as_paused` option (default `false`): a player that was playing or paused
   in this browser session and then goes `idle` (Sonos often skips `paused`) stays
   visible as paused and hides after `paused_timeout_minutes`.

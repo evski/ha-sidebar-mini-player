@@ -149,6 +149,8 @@ The player re-reads the object every second, so load order doesn't matter. You c
 | `show_dismiss_button` | boolean | `true` | Small × on the focused card when hovering with a mouse. |
 | `show_volume` | boolean | `true` | Volume slider and mute, when the player supports them. |
 | `show_progress` | boolean | `true` | Progress bar, when the player reports a position. |
+| `show_shuffle` | boolean | `false` | Shuffle button left of previous. Only for players that support it; lit when shuffle is on. |
+| `show_repeat` | boolean | `false` | Repeat button right of next. Cycles off, all, one. Only for players that support it; lit when repeat is on. |
 | `remember_dismissed` | boolean | `true` | Remember dismissals across reloads, in this browser's local storage. `false` keeps them until the next reload. |
 
 ## Gestures and controls

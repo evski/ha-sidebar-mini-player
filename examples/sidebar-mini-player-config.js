@@ -37,6 +37,9 @@ window.sidebarMiniPlayerConfig = {
   show_dismiss_button: true,
   show_volume: true,
   show_progress: true,
+  // Shuffle (left of previous) / repeat (right of next) buttons, if the player supports them.
+  show_shuffle: false,
+  show_repeat: false,
   // Remember swipe dismissals across reloads (per browser / device).
   remember_dismissed: true,
 };
