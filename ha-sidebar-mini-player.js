@@ -139,6 +139,11 @@
     exclude: [],
     /** Hide a player once it has been paused this many minutes. 0 = never auto-hide. */
     paused_timeout_minutes: 5,
+    /** Some players (e.g. Sonos) go straight from playing to "idle" when paused or
+     *  stopped, so they never reach "paused". true = a player that was playing/paused
+     *  in this browser session and then went idle stays visible as "paused" and
+     *  follows paused_timeout_minutes. false = idle players are hidden at once. */
+    idle_as_paused: false,
     /** "bottom" = just above Settings (default), "top" = just below the sidebar header. */
     position: "bottom",
     /** Any CSS colour for buttons, progress and slider. "" = theme's --primary-color
@@ -378,8 +383,28 @@
   }
 
   /**
+   * idle_as_paused: the last playing/paused state we saw per entity in THIS
+   * page session (so a reload never resurrects old players). Dropped as soon as
+   * the entity is seen in any other state than playing/paused/idle, or timed out.
+   */
+  const lastActive = new Map();
+
+  /**
+   * View of an idle player as a "paused" one. Idle players often have their media
+   * attributes cleared, so title/artwork come from the last active state; live
+   * non-null attributes (volume, mute, features) win. last_changed is the idle
+   * transition, so paused_timeout_minutes counts from when it stopped.
+   */
+  function idleAsPaused(idle, last) {
+    const attrs = { ...(last.attributes || {}) };
+    for (const [k, v] of Object.entries(idle.attributes || {})) if (v != null) attrs[k] = v;
+    return { ...idle, state: "paused", _rawState: "idle", attributes: attrs };
+  }
+
+  /**
    * Active players (playing/paused) after include/exclude and dedupe, sorted:
    * playing before paused, then most recently changed first.
+   * (With idle_as_paused, idle players seen playing/paused earlier count as paused.)
    * Players paused > paused_timeout_minutes are dropped here, BEFORE dedupe,
    * so a stale paused MA player can't hide a native twin that is genuinely
    * playing. (Only playing/paused ever count -
@@ -389,7 +414,15 @@
     let list = [];
     for (const id of mediaPlayerIds(hass.states)) {
       const s = hass.states[id];
-      if (s && ACTIVE_STATES.includes(s.state) && !pausedTooLong(s, now)) list.push(s);
+      if (!s) { lastActive.delete(id); continue; }
+      if (ACTIVE_STATES.includes(s.state)) {
+        if (pausedTooLong(s, now)) lastActive.delete(id); // timed out: must not linger again after going idle
+        else { list.push(s); if (CFG.idle_as_paused) lastActive.set(id, s); }
+      } else if (CFG.idle_as_paused && s.state === "idle" && lastActive.has(id)) {
+        const v = idleAsPaused(s, lastActive.get(id));
+        if (pausedTooLong(v, now)) lastActive.delete(id); // timed out while idle: forget it
+        else list.push(v);
+      } else lastActive.delete(id); // off / unavailable / ... : forget it
     }
     list = dedupe(list);
     list.sort((x, y) => {
@@ -413,7 +446,8 @@
    *   DISMISS_MAX_ENTRIES. localStorage errors (private mode, quota) are ignored -
    *   dismissals then just last until reload.
    */
-  const dismissKey = (s) => `${s.last_changed}|${s.state}`;
+  // _rawState: a lingering idle player (idle_as_paused) is shown as "paused" but its real state is "idle".
+  const dismissKey = (s) => `${s.last_changed}|${s._rawState || s.state}`;
   const dismissals = {
     map: null,          // lazily loaded
     syncedStates: null, // last hass.states object we pruned against

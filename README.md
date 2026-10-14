@@ -139,6 +139,7 @@ The player re-reads the object every second, so load order doesn't matter. You c
 | `include` | list of strings | `[]` | Only show these players. Entity ids with `*` wildcards, e.g. `media_player.living_*`. An empty list means all `media_player` entities. |
 | `exclude` | list of strings | `[]` | Never show these players. Applied after `include`. Handy for `media_player.browser_mod_*`. |
 | `paused_timeout_minutes` | number | `5` | Hide a player that has been paused this long. `0` means never hide. |
+| `idle_as_paused` | boolean | `false` | For players that go straight from playing to `idle` when paused or stopped (some Sonos setups): keep a player that was playing or paused in this browser session visible as paused after it goes `idle`, and hide it after `paused_timeout_minutes`. Needs `paused_timeout_minutes` > 0 to ever hide it. |
 | `position` | `"bottom"` / `"top"` | `"bottom"` | `bottom` sits just above Settings. `top` sits just below the sidebar header. |
 | `accent_color` | CSS colour | `""` | Colour for buttons, progress and the slider. Empty means the theme's primary colour. |
 | `max_collapsed_cards` | number | `4` | Collapsed cards shown above the focused card before a "+N more" row. |
@@ -209,6 +210,8 @@ The `accent_color` config option, if set, takes priority over the theme variable
 5. Check `include` / `exclude` and `paused_timeout_minutes` in your config.
 
 **I updated but still see the old version.** Bump `?v=` in `extra_module_url`, restart, and clear the cache as above.
+
+**A paused player vanishes at once, `paused_timeout_minutes` has no effect.** Check the player's history in Home Assistant. If it goes from `playing` straight to `idle` (never `paused`), the player is hidden because only `playing`/`paused` count as active. Set `idle_as_paused: true` to keep it visible for `paused_timeout_minutes`.
 
 **A player is missing.** It may have been paused for longer than `paused_timeout_minutes`, or dismissed on this device. It comes back as soon as it plays again. You can also clear the `sidebar-mini-player:dismissed` key in the browser's local storage.
 

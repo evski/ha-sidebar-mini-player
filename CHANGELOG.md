@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `idle_as_paused` option (default `false`): a player that was playing or paused
+  in this browser session and then goes `idle` (Sonos often skips `paused`) stays
+  visible as paused and hides after `paused_timeout_minutes`.
+
 ## [1.0.0] - 2026-10-11
 
 First public release. The player was developed and used day to day on a real

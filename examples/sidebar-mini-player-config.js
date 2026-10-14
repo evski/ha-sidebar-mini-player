@@ -20,6 +20,9 @@ window.sidebarMiniPlayerConfig = {
   exclude: ["media_player.browser_mod_*"],
   // Hide a player after it has been paused this long (minutes). 0 = never.
   paused_timeout_minutes: 5,
+  // Players that go playing -> "idle" (never "paused"), e.g. some Sonos: keep them
+  // visible as paused until paused_timeout_minutes has passed.
+  idle_as_paused: false,
   // "bottom" = just above Settings, "top" = just below the sidebar header.
   position: "bottom",
   // Any CSS colour. "" = your theme's primary colour.

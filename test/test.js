@@ -699,6 +699,58 @@ function setup(layoutHtml, statesFile = FIXTURE, prep = null, opts = {}) {
       !c.ids().includes("media_player.kitchen_2") && c.ids().includes("media_player.kitchen") && c.ids().length === 3, c.ids().join(","));
     c.t.w.close();
 
+    // idle_as_paused: players that go playing -> idle (e.g. Sonos) linger as "paused"
+    {
+      const goIdle = (t, id, lcMs, clear = true) => {
+        const old = t.states[id];
+        t.states[id] = { ...old, state: "idle", last_changed: new Date(Date.now() - lcMs).toISOString(),
+          attributes: clear ? { friendly_name: old.attributes.friendly_name, supported_features: old.attributes.supported_features } : old.attributes };
+      };
+      const label = (c, id) => { const n = c.R.querySelector(`.mini[data-entity="${id}"] .spk`); return n ? n.textContent : null; };
+      // default (off): playing -> idle disappears at once
+      c = await open(undefined);
+      goIdle(c.t, "media_player.lounge_tv", 5000); await sleep(1200);
+      check("C12 default: player that went idle is hidden immediately", !c.ids().includes("media_player.lounge_tv"), c.ids().join(","));
+      c.t.w.close();
+      // on: stays, shown as paused, with the last known title (idle attributes were cleared)
+      c = await open({ idle_as_paused: true });
+      const title = c.t.states["media_player.lounge_tv"].attributes.media_title;
+      goIdle(c.t, "media_player.lounge_tv", 5000); await sleep(1200);
+      const mini = c.R.querySelector('.mini[data-entity="media_player.lounge_tv"]');
+      check("C12 idle_as_paused: idle player stays visible", c.ids().includes("media_player.lounge_tv"), c.ids().join(","));
+      check("C12 idle_as_paused: shown as paused, last title kept", mini && /· paused$/.test(label(c, "media_player.lounge_tv")) && (!title || mini.querySelector(".title").textContent === title), mini && mini.querySelector(".title").textContent);
+      check("C12 idle_as_paused: idle player never seen active (living_room) is not shown", !c.ids().some((x) => /living_room$/.test(x)), c.ids().join(","));
+      // paused_timeout_minutes counts from the idle transition (no state update needed)
+      goIdle(c.t, "media_player.lounge_tv", 6 * 60000); await sleep(1200);
+      check("C12 idle_as_paused: hidden after paused_timeout_minutes (5) idle", !c.ids().includes("media_player.lounge_tv"), c.ids().join(","));
+      // once timed out, it does not come back when idle again later
+      goIdle(c.t, "media_player.lounge_tv", 1000); await sleep(1200);
+      check("C12 idle_as_paused: timed-out player does not linger again", !c.ids().includes("media_player.lounge_tv"), c.ids().join(","));
+      c.t.w.close();
+      // unavailable / off drops the snapshot
+      c = await open({ idle_as_paused: true });
+      goIdle(c.t, "media_player.lounge_tv", 5000); await sleep(1200);
+      c.t.states["media_player.lounge_tv"] = { ...c.t.states["media_player.lounge_tv"], state: "unavailable" }; await sleep(1200);
+      c.t.states["media_player.lounge_tv"] = { ...c.t.states["media_player.lounge_tv"], state: "idle", last_changed: new Date().toISOString() }; await sleep(1200);
+      check("C12 idle_as_paused: idle after unavailable is not resurrected", !c.ids().includes("media_player.lounge_tv"), c.ids().join(","));
+      c.t.w.close();
+      // dismissal of a lingering card persists (key uses the real state, idle)
+      c = await open({ idle_as_paused: true });
+      goIdle(c.t, "media_player.lounge_tv", 5000); await sleep(1200);
+      c.p._dismiss("media_player.lounge_tv"); await sleep(1200);
+      check("C12 idle_as_paused: dismissed lingering card stays dismissed", !c.ids().includes("media_player.lounge_tv"), c.ids().join(","));
+      c.t.w.close();
+      // play/pause on a lingering card -> service call on the real entity
+      c = await open({ idle_as_paused: true });
+      goIdle(c.t, "media_player.lounge_tv", 5000); await sleep(1200);
+      c.R.querySelector('.mini[data-entity="media_player.lounge_tv"] button.mpp').click(); await sleep(100);
+      check("C12 idle_as_paused: play button calls media_play_pause", c.t.calls.some((x) => x[1] === "media_play_pause" && x[2].includes("media_player.lounge_tv")), JSON.stringify(c.t.calls));
+      c.t.w.close();
+      c = await open({ idle_as_paused: "yes" }, { warnings: [] });
+      check("C12 invalid idle_as_paused falls back to false", c.t.w.sidebarMiniPlayer.config.idle_as_paused === false);
+      c.t.w.close();
+    }
+
     // dedupe off -> native twin shows
     c = await open({ dedupe_music_assistant: false });
     check("C6 dedupe_music_assistant false: native twin (kitchen) shown", c.ids().includes("media_player.kitchen") && c.ids().length === 4, c.ids().join(","));
