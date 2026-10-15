@@ -35,7 +35,7 @@
  *   Recommended - load on every page:
  *     frontend:
  *       extra_module_url:
- *         - /hacsfiles/ha-sidebar-mini-player/ha-sidebar-mini-player.js?v=1.0.0
+ *         - /hacsfiles/ha-sidebar-mini-player/ha-sidebar-mini-player.js?v=1.1.0
  *   (or /local/ha-sidebar-mini-player.js for a manual install), then restart
  *   Home Assistant and refresh the browser / reset the companion app's
  *   frontend cache. A plain Lovelace dashboard resource also works, but then
@@ -116,7 +116,7 @@
 
   /** Custom element tag + version (keep VERSION in sync with package.json and CHANGELOG.md). */
   const TAG = "sidebar-mini-player";
-  const VERSION = "1.0.0";
+  const VERSION = "1.1.0";
 
   // Loaded twice (e.g. extra_module_url AND a dashboard resource, or two
   // different URLs) -> the second copy does nothing.

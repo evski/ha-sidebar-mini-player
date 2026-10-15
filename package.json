@@ -1,6 +1,6 @@
 {
   "name": "ha-sidebar-mini-player",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Now-playing mini media player docked in the Home Assistant sidebar on every page. Auto-detects any media_player, Music Assistant aware, swipe to dismiss. HACS plugin.",
   "private": true,
   "main": "ha-sidebar-mini-player.js",

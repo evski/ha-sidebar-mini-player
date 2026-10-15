@@ -4,9 +4,9 @@
 frontend:
   extra_module_url:
     # Installed with HACS (recommended):
-    - /hacsfiles/ha-sidebar-mini-player/ha-sidebar-mini-player.js?v=1.0.0
+    - /hacsfiles/ha-sidebar-mini-player/ha-sidebar-mini-player.js?v=1.1.0
     # Manual install (file copied to /config/www/):
-    # - /local/ha-sidebar-mini-player.js?v=1.0.0
+    # - /local/ha-sidebar-mini-player.js?v=1.1.0
     # Optional settings file (see examples/sidebar-mini-player-config.js):
     # - /local/sidebar-mini-player-config.js?v=1
 

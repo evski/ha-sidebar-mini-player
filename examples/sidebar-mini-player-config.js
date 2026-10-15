@@ -5,7 +5,7 @@
 //
 //      frontend:
 //        extra_module_url:
-//          - /hacsfiles/ha-sidebar-mini-player/ha-sidebar-mini-player.js?v=1.0.0
+//          - /hacsfiles/ha-sidebar-mini-player/ha-sidebar-mini-player.js?v=1.1.0
 //          - /local/sidebar-mini-player-config.js?v=1
 //
 // 3. Restart Home Assistant once. Later edits only need a browser refresh

@@ -80,7 +80,7 @@ Add this to `configuration.yaml`:
 ```yaml
 frontend:
   extra_module_url:
-    - /hacsfiles/ha-sidebar-mini-player/ha-sidebar-mini-player.js?v=1.0.0
+    - /hacsfiles/ha-sidebar-mini-player/ha-sidebar-mini-player.js?v=1.1.0
 ```
 
 Restart Home Assistant, then refresh your browser. In the companion app, reset the frontend cache: see [Mobile](#mobile-and-the-ios-companion-app).
@@ -102,10 +102,10 @@ You can use both routes at once. The module notices it's already loaded and the 
    ```yaml
    frontend:
      extra_module_url:
-       - /local/ha-sidebar-mini-player.js?v=1.0.0
+       - /local/ha-sidebar-mini-player.js?v=1.1.0
    ```
 
-   Or add `/local/ha-sidebar-mini-player.js?v=1.0.0` as a dashboard resource (JavaScript module).
+   Or add `/local/ha-sidebar-mini-player.js?v=1.1.0` as a dashboard resource (JavaScript module).
 4. Restart Home Assistant and refresh the browser.
 
 **Uninstall:** remove the line or resource, restart, refresh, and delete the file. The player creates no entities, helpers or storage in Home Assistant.
@@ -128,7 +128,7 @@ window.sidebarMiniPlayerConfig = {
 ```yaml
 frontend:
   extra_module_url:
-    - /hacsfiles/ha-sidebar-mini-player/ha-sidebar-mini-player.js?v=1.0.0
+    - /hacsfiles/ha-sidebar-mini-player/ha-sidebar-mini-player.js?v=1.1.0
     - /local/sidebar-mini-player-config.js?v=1
 ```
 
@@ -206,7 +206,7 @@ The `accent_color` config option, if set, takes priority over the theme variable
 
 **The player doesn't appear.**
 1. Is something actually **playing or paused**? Idle, on, standby and off players are hidden on purpose.
-2. Open the browser console. You should see `SIDEBAR-MINI-PLAYER v1.0.0`, and `window.__sidebarMiniPlayerLoaded` should return the version.
+2. Open the browser console. You should see `SIDEBAR-MINI-PLAYER v1.1.0`, and `window.__sidebarMiniPlayerLoaded` should return the version.
 3. After adding `extra_module_url`, **restart Home Assistant**, then hard-refresh or reset the app's frontend cache.
 4. Using the dashboard-resource route? Open any dashboard once in that tab.
 5. Check `include` / `exclude` and `paused_timeout_minutes` in your config.

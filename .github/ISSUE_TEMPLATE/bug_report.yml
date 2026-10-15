@@ -26,7 +26,7 @@ body:
     attributes:
       label: Sidebar Mini Player version
       description: Run `window.__sidebarMiniPlayerLoaded` in the browser console
-      placeholder: "1.0.0"
+      placeholder: "1.1.0"
     validations:
       required: true
   - type: input
