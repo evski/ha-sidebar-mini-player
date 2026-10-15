@@ -139,6 +139,11 @@
     exclude: [],
     /** Hide a player once it has been paused this many minutes. 0 = never auto-hide. */
     paused_timeout_minutes: 5,
+    /** Some players (e.g. Sonos) go straight from playing to "idle" when paused or
+     *  stopped, so they never reach "paused". true = a player that was playing/paused
+     *  in this browser session and then went idle stays visible as "paused" and
+     *  follows paused_timeout_minutes. false = idle players are hidden at once. */
+    idle_as_paused: false,
     /** "bottom" = just above Settings (default), "top" = just below the sidebar header. */
     position: "bottom",
     /** Any CSS colour for buttons, progress and slider. "" = theme's --primary-color
@@ -158,6 +163,10 @@
     show_volume: true,
     /** Progress bar (when the player reports a position). */
     show_progress: true,
+    /** Shuffle button left of previous (only for players that support shuffle_set). */
+    show_shuffle: false,
+    /** Repeat button right of next, cycles off / all / one (only for players that support repeat_set). */
+    show_repeat: false,
     /** Keep dismissals across reloads (this browser's localStorage). false = until reload. */
     remember_dismissed: true,
   });
@@ -228,6 +237,8 @@
   /** supported_features bits (MediaPlayerEntityFeature). */
   const FEAT_VOLUME_SET = 4;   // slider
   const FEAT_VOLUME_MUTE = 8;  // mute icon
+  const FEAT_SHUFFLE_SET = 32768;  // shuffle button
+  const FEAT_REPEAT_SET = 262144;  // repeat button
   /** Volume: wait this long (ms) after the last slider move before calling volume_set. */
   const VOLUME_DEBOUNCE_MS = 250;
   /** Volume: ignore incoming volume_level for this long (ms) after the user moved it,
@@ -378,8 +389,28 @@
   }
 
   /**
+   * idle_as_paused: the last playing/paused state we saw per entity in THIS
+   * page session (so a reload never resurrects old players). Dropped as soon as
+   * the entity is seen in any other state than playing/paused/idle, or timed out.
+   */
+  const lastActive = new Map();
+
+  /**
+   * View of an idle player as a "paused" one. Idle players often have their media
+   * attributes cleared, so title/artwork come from the last active state; live
+   * non-null attributes (volume, mute, features) win. last_changed is the idle
+   * transition, so paused_timeout_minutes counts from when it stopped.
+   */
+  function idleAsPaused(idle, last) {
+    const attrs = { ...(last.attributes || {}) };
+    for (const [k, v] of Object.entries(idle.attributes || {})) if (v != null) attrs[k] = v;
+    return { ...idle, state: "paused", _rawState: "idle", attributes: attrs };
+  }
+
+  /**
    * Active players (playing/paused) after include/exclude and dedupe, sorted:
    * playing before paused, then most recently changed first.
+   * (With idle_as_paused, idle players seen playing/paused earlier count as paused.)
    * Players paused > paused_timeout_minutes are dropped here, BEFORE dedupe,
    * so a stale paused MA player can't hide a native twin that is genuinely
    * playing. (Only playing/paused ever count -
@@ -389,7 +420,15 @@
     let list = [];
     for (const id of mediaPlayerIds(hass.states)) {
       const s = hass.states[id];
-      if (s && ACTIVE_STATES.includes(s.state) && !pausedTooLong(s, now)) list.push(s);
+      if (!s) { lastActive.delete(id); continue; }
+      if (ACTIVE_STATES.includes(s.state)) {
+        if (pausedTooLong(s, now)) lastActive.delete(id); // timed out: must not linger again after going idle
+        else { list.push(s); if (CFG.idle_as_paused) lastActive.set(id, s); }
+      } else if (CFG.idle_as_paused && s.state === "idle" && lastActive.has(id)) {
+        const v = idleAsPaused(s, lastActive.get(id));
+        if (pausedTooLong(v, now)) lastActive.delete(id); // timed out while idle: forget it
+        else list.push(v);
+      } else lastActive.delete(id); // off / unavailable / ... : forget it
     }
     list = dedupe(list);
     list.sort((x, y) => {
@@ -413,7 +452,8 @@
    *   DISMISS_MAX_ENTRIES. localStorage errors (private mode, quota) are ignored -
    *   dismissals then just last until reload.
    */
-  const dismissKey = (s) => `${s.last_changed}|${s.state}`;
+  // _rawState: a lingering idle player (idle_as_paused) is shown as "paused" but its real state is "idle".
+  const dismissKey = (s) => `${s.last_changed}|${s._rawState || s.state}`;
   const dismissals = {
     map: null,          // lazily loaded
     syncedStates: null, // last hass.states object we pruned against
@@ -486,6 +526,9 @@
 
   // Inline SVG paths (Material Design Icons) so we need no ha-icon dependency.
   const ICON = {
+    shuffle: "M14.83,13.41L13.42,14.82L16.55,17.95L14.5,20H20V14.5L17.96,16.54L14.83,13.41M14.5,4L16.54,6.04L4,18.59L5.41,20L17.96,7.46L20,9.5V4M10.59,9.17L5.41,4L4,5.41L9.17,10.58L10.59,9.17Z",
+    repeat: "M17,17H7V14L3,18L7,22V19H19V13H17M7,7H17V10L21,6L17,2V5H5V11H7V7Z",
+    repeatOnce: "M13,15V9H12L10,10V11H11.5V15M17,17H7V14L3,18L7,22V19H19V13H17M7,7H17V10L21,6L17,2V5H5V11H7V7Z",
     play: "M8,5.14V19.14L19,12.14L8,5.14Z",
     pause: "M14,19H18V5H14M6,19H10V5H6V19Z",
     next: "M16,18H18V6H16M6,18L14.5,12L6,6V18Z",
@@ -500,6 +543,32 @@
   };
   const svg = (path) =>
     `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${path}"></path></svg>`;
+
+  /** Shuffle / repeat buttons (left of previous / right of next). Shown only when
+   *  enabled in the config AND the player supports it; `on` styling = accent colour. */
+  const SHUFFLE_BTN = `<button class="mode" data-act="shuffle" hidden></button>`;
+  const REPEAT_BTN = `<button class="mode" data-act="repeat" hidden></button>`;
+  function renderModes(root, s) {
+    const a = s.attributes || {}, feats = Number(a.supported_features) || 0;
+    const set = (btn, show, on, icon, title) => {
+      btn.hidden = !show;
+      if (!show) return;
+      const key = icon + (on ? "-on" : "");
+      if (btn.dataset.icon !== key) { btn.innerHTML = svg(ICON[icon]); btn.dataset.icon = key; }
+      btn.classList.toggle("on", on);
+      if (btn.title !== title) btn.title = title;
+    };
+    const sh = root.querySelector('[data-act="shuffle"]');
+    if (sh) {
+      const on = a.shuffle === true;
+      set(sh, CFG.show_shuffle && (feats & FEAT_SHUFFLE_SET) !== 0, on, "shuffle", `Shuffle: ${on ? "on" : "off"}`);
+    }
+    const rp = root.querySelector('[data-act="repeat"]');
+    if (rp) {
+      const mode = a.repeat === "all" || a.repeat === "one" ? a.repeat : "off";
+      set(rp, CFG.show_repeat && (feats & FEAT_REPEAT_SET) !== 0, mode !== "off", mode === "one" ? "repeatOnce" : "repeat", `Repeat: ${mode}`);
+    }
+  }
 
   // --------------------------------------------------------------------------
   // The player element. Own shadow root -> our CSS can't leak into the sidebar
@@ -564,6 +633,10 @@
           .artist { font-size: 12px; color: var(--secondary-text-color); }
           .spk { font-size: 11px; color: var(--secondary-text-color); opacity: 0.85; }
           .controls { display: flex; align-items: center; justify-content: center; gap: 4px; margin-top: 4px; }
+          /* shuffle / repeat: slightly smaller, dim when off, accent colour when on */
+          .controls button.mode { width: 26px; height: 26px; opacity: 0.55; }
+          .controls button.mode svg { width: 18px; height: 18px; }
+          .controls button.mode.on { color: var(--smp-accent); opacity: 1; }
           button {
             all: unset; cursor: pointer; display: inline-flex; align-items: center;
             justify-content: center; width: 30px; height: 30px; border-radius: 50%;
@@ -775,9 +848,11 @@
             </div>
           </div>
           <div class="controls">
+            ${SHUFFLE_BTN}
             <button data-act="prev" title="Previous">${svg(ICON.prev)}</button>
             <button class="pp" data-act="playpause" title="Play/Pause"></button>
             <button data-act="next" title="Next">${svg(ICON.next)}</button>
+            ${REPEAT_BTN}
           </div>
           <div class="bar" hidden><div></div></div>
           <div class="vol" hidden>
@@ -1226,6 +1301,7 @@
 
       // Volume row. Skipped in the collapsed sidebar (CSS hides it too).
       if (!this._collapsed) this._renderVolume(s);
+      renderModes(e.wrap, s);
 
       // Progress bar
       const pos = currentPosition(s);
@@ -1256,8 +1332,8 @@
       // Focused player = from the VISIBLE list.
       const s = entityId ? hass.states[entityId] : this._current(visiblePlayers(hass));
       if (!s) return;
-      const call = (service) =>
-        hass.callService("media_player", service, { entity_id: s.entity_id })
+      const call = (service, data = {}) =>
+        hass.callService("media_player", service, { entity_id: s.entity_id, ...data })
           .catch((err) => console.warn(`[${TAG}] ${service} failed`, err));
       switch (act) {
         case "playpause": {
@@ -1276,6 +1352,12 @@
         case "dismiss": this._dismiss(s.entity_id); break; // hover "x"
         case "next": call("media_next_track"); break;
         case "prev": call("media_previous_track"); break;
+        case "shuffle": call("shuffle_set", { shuffle: s.attributes.shuffle !== true }); break;
+        case "repeat": { // off -> all -> one -> off
+          const cur = s.attributes.repeat;
+          call("repeat_set", { repeat: cur === "all" ? "one" : cur === "one" ? "off" : "all" });
+          break;
+        }
         case "mute": {
           if (!((Number(s.attributes.supported_features) || 0) & FEAT_VOLUME_MUTE)) return;
           hass.callService("media_player", "volume_mute", {
@@ -1340,9 +1422,11 @@
         <div class="extra">
           <div class="artist"></div>
           <div class="controls">
+            ${SHUFFLE_BTN}
             <button data-act="prev" title="Previous">${svg(ICON.prev)}</button>
             <button class="pp" data-act="playpause" title="Play/Pause"></button>
             <button data-act="next" title="Next">${svg(ICON.next)}</button>
+            ${REPEAT_BTN}
           </div>
           <div class="bar" hidden><div></div></div>
         </div>`;
@@ -1384,6 +1468,7 @@
         if (b.dataset.icon !== shown) { b.innerHTML = svg(shown === "playing" ? ICON.pause : ICON.play); b.dataset.icon = shown; }
       });
       // progress (visible in the hover preview)
+      renderModes(n, st);
       const pos = currentPosition(st), bar = n.querySelector(".bar");
       bar.hidden = pos === null || !CFG.show_progress;
       if (pos !== null) bar.firstElementChild.style.width = ((pos / a.media_duration) * 100).toFixed(2) + "%";

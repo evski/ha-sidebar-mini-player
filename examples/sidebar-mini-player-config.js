@@ -20,6 +20,9 @@ window.sidebarMiniPlayerConfig = {
   exclude: ["media_player.browser_mod_*"],
   // Hide a player after it has been paused this long (minutes). 0 = never.
   paused_timeout_minutes: 5,
+  // Players that go playing -> "idle" (never "paused"), e.g. some Sonos: keep them
+  // visible as paused until paused_timeout_minutes has passed.
+  idle_as_paused: false,
   // "bottom" = just above Settings, "top" = just below the sidebar header.
   position: "bottom",
   // Any CSS colour. "" = your theme's primary colour.
@@ -34,6 +37,9 @@ window.sidebarMiniPlayerConfig = {
   show_dismiss_button: true,
   show_volume: true,
   show_progress: true,
+  // Shuffle (left of previous) / repeat (right of next) buttons, if the player supports them.
+  show_shuffle: false,
+  show_repeat: false,
   // Remember swipe dismissals across reloads (per browser / device).
   remember_dismissed: true,
 };
