@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Now in the HACS default store: install by searching for Sidebar Mini Player in HACS, no custom repository needed. README badge and install steps updated.
+
 ## [1.1.0] - 2026-10-15
 
 Thanks to @max-t-d for both features (#7).

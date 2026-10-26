@@ -1,6 +1,6 @@
 # Sidebar Mini Player for Home Assistant
 
-[![HACS Custom](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://hacs.xyz/docs/faq/custom_repositories/)
+[![HACS Default](https://img.shields.io/badge/HACS-Default-41BDF5.svg)](https://hacs.xyz/)
 [![GitHub release](https://img.shields.io/github/v/release/Evski/ha-sidebar-mini-player?sort=semver)](https://github.com/Evski/ha-sidebar-mini-player/releases)
 [![Downloads](https://img.shields.io/github/downloads/Evski/ha-sidebar-mini-player/total)](https://github.com/Evski/ha-sidebar-mini-player/releases)
 [![License: MIT](https://img.shields.io/github/license/Evski/ha-sidebar-mini-player)](LICENSE)
@@ -69,7 +69,7 @@ Players with no Home Assistant entity can't be shown. One example is the Music A
 
 [![Open your Home Assistant instance and open this repository inside HACS.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=Evski&repository=ha-sidebar-mini-player&category=plugin)
 
-1. Click the button above. Or open **HACS → ⋮ → Custom repositories**, add `https://github.com/Evski/ha-sidebar-mini-player` with type **Dashboard**, then search for **Sidebar Mini Player**.
+1. Open **HACS** and search for **Sidebar Mini Player** (it's in the HACS default store), or click the button above.
 2. Click **Download**.
 3. Choose how to load it.
 
@@ -247,7 +247,6 @@ Ideas under consideration. Please upvote or suggest in [Discussions](https://git
 - Optional source / sound-mode picker
 - Configuration through a small UI panel instead of a JavaScript file
 - Translations for the few built-in labels
-- Submission to the HACS default store
 
 ## Contributing
 
