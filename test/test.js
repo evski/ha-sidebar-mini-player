@@ -308,6 +308,13 @@ function setup(layoutHtml, statesFile = FIXTURE, prep = null, opts = {}) {
     // New Speaker is now the most recent playing -> auto focus (no click choice made in this run).
     check("V3 newly added entity discovered + auto-focused (5 active)", q3(".spk").textContent === "New Speaker" && R3.querySelectorAll(".mini").length === 4,
       `${q3(".spk").textContent}, minis=${R3.querySelectorAll(".mini").length}`);
+    // Entity renamed (one id out, one in, so the key count stays the same) -> still shown.
+    const stR = { ...t3.ha.hass.states };
+    delete stR["media_player.new_speaker"];
+    stR["media_player.renamed_speaker"] = { entity_id: "media_player.renamed_speaker", state: "playing", last_changed: new Date().toISOString(), attributes: { friendly_name: "Renamed Speaker", media_title: "Hello" } };
+    t3.ha.hass = { ...t3.hass, states: stR }; await sleep(1200);
+    check("V3 renamed entity (same entity count) picked up", q3(".spk").textContent === "Renamed Speaker" && R3.querySelectorAll(".mini").length === 4,
+      `${q3(".spk").textContent}, minis=${R3.querySelectorAll(".mini").length}`);
     // Cap: add 3 more -> 8 active, 7 others -> 4 cards + "+3 more" at the top.
     const st4 = { ...t3.ha.hass.states };
     for (const k of ["a", "b", "c"]) st4["media_player.extra_" + k] = { entity_id: "media_player.extra_" + k, state: "paused", last_changed: new Date(Date.now() - 4 * 60000).toISOString() /* < 5 min */, attributes: { friendly_name: "Extra " + k.toUpperCase(), media_title: "T" + k } };

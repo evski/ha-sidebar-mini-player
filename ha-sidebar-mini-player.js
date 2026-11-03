@@ -309,15 +309,16 @@
   /**
    * Cached list of candidate media_player ids. A large install has thousands
    * of entities; we only re-list hass.states' keys when the states object
-   * changed AND its key count changed (entity added/removed), or the config
-   * changed. Otherwise each tick only looks at the cached media players.
+   * changed AND its key count changed (entity added/removed) or a cached
+   * player is gone (entity renamed: one id out, one in, same count), or the
+   * config changed. Otherwise each tick only looks at the cached media players.
    */
   const cache = { states: null, count: -1, ids: [] };
   function mediaPlayerIds(states) {
     if (states !== cache.states) {
       cache.states = states;
       const keys = Object.keys(states);
-      if (keys.length !== cache.count) {
+      if (keys.length !== cache.count || cache.ids.some((id) => !(id in states))) {
         cache.count = keys.length;
         cache.ids = keys.filter((id) => id.startsWith("media_player.") && allowed(id));
       }
