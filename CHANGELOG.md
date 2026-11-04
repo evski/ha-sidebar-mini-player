@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.1] - 2026-11-04
+
+Thanks to @OpenDeernet for the fix (#8).
+
 ### Fixed
 
 - A media player renamed in Home Assistant (new entity id) no longer disappears
@@ -68,6 +72,7 @@ Home Assistant install before being made generic and open-sourced.
 - HACS packaging, jsdom test suite (`npm test`) and GitHub Actions for HACS
   validation, tests and releases.
 
-[Unreleased]: https://github.com/Evski/ha-sidebar-mini-player/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/Evski/ha-sidebar-mini-player/compare/v1.1.1...HEAD
+[1.1.1]: https://github.com/Evski/ha-sidebar-mini-player/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/Evski/ha-sidebar-mini-player/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/Evski/ha-sidebar-mini-player/releases/tag/v1.0.0
