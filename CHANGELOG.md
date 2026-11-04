@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- A media player renamed in Home Assistant (new entity id) no longer disappears
+  from the sidebar until the page is reloaded.
+
 ### Changed
 
 - Now in the HACS default store: install by searching for Sidebar Mini Player in HACS, no custom repository needed. README badge and install steps updated.
