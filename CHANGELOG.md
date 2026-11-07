@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-11-07
+
+### Added
+
+- **Dashboard card**: `custom:sidebar-mini-player-card` puts the same player anywhere on a
+  dashboard. `entity` / `entities` limit it to particular players, and every configuration
+  option can be set per card (global options are the defaults). It matches your theme's
+  cards and hides itself when nothing is playing. Also listed in the card picker.
+- `show_in_sidebar` option (default `true`): `false` shows the player only where you add the
+  dashboard card, for wall panels and other screens whose sidebar is hidden.
+
 ## [1.1.1] - 2026-11-04
 
 Thanks to @OpenDeernet for the fix (#8).
@@ -72,7 +83,8 @@ Home Assistant install before being made generic and open-sourced.
 - HACS packaging, jsdom test suite (`npm test`) and GitHub Actions for HACS
   validation, tests and releases.
 
-[Unreleased]: https://github.com/Evski/ha-sidebar-mini-player/compare/v1.1.1...HEAD
+[Unreleased]: https://github.com/Evski/ha-sidebar-mini-player/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/Evski/ha-sidebar-mini-player/compare/v1.1.1...v1.2.0
 [1.1.1]: https://github.com/Evski/ha-sidebar-mini-player/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/Evski/ha-sidebar-mini-player/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/Evski/ha-sidebar-mini-player/releases/tag/v1.0.0
