@@ -20,6 +20,7 @@
 - [Install with HACS](#install-with-hacs)
 - [Manual install](#manual-install)
 - [Configuration](#configuration)
+- [Dashboard card](#dashboard-card)
 - [Gestures and controls](#gestures-and-controls)
 - [Mobile and the iOS companion app](#mobile-and-the-ios-companion-app)
 - [Theming](#theming)
@@ -80,7 +81,7 @@ Add this to `configuration.yaml`:
 ```yaml
 frontend:
   extra_module_url:
-    - /hacsfiles/ha-sidebar-mini-player/ha-sidebar-mini-player.js?v=1.1.1
+    - /hacsfiles/ha-sidebar-mini-player/ha-sidebar-mini-player.js?v=1.2.0
 ```
 
 Restart Home Assistant, then refresh your browser. In the companion app, reset the frontend cache: see [Mobile](#mobile-and-the-ios-companion-app).
@@ -102,10 +103,10 @@ You can use both routes at once. The module notices it's already loaded and the 
    ```yaml
    frontend:
      extra_module_url:
-       - /local/ha-sidebar-mini-player.js?v=1.1.1
+       - /local/ha-sidebar-mini-player.js?v=1.2.0
    ```
 
-   Or add `/local/ha-sidebar-mini-player.js?v=1.1.1` as a dashboard resource (JavaScript module).
+   Or add `/local/ha-sidebar-mini-player.js?v=1.2.0` as a dashboard resource (JavaScript module).
 4. Restart Home Assistant and refresh the browser.
 
 **Uninstall:** remove the line or resource, restart, refresh, and delete the file. The player creates no entities, helpers or storage in Home Assistant.
@@ -128,7 +129,7 @@ window.sidebarMiniPlayerConfig = {
 ```yaml
 frontend:
   extra_module_url:
-    - /hacsfiles/ha-sidebar-mini-player/ha-sidebar-mini-player.js?v=1.1.1
+    - /hacsfiles/ha-sidebar-mini-player/ha-sidebar-mini-player.js?v=1.2.0
     - /local/sidebar-mini-player-config.js?v=1
 ```
 
@@ -152,6 +153,28 @@ The player re-reads the object every second, so load order doesn't matter. You c
 | `show_shuffle` | boolean | `false` | Shuffle button left of previous. Only for players that support it; lit when shuffle is on. |
 | `show_repeat` | boolean | `false` | Repeat button right of next. Cycles off, all, one. Only for players that support it; lit when repeat is on. |
 | `remember_dismissed` | boolean | `true` | Remember dismissals across reloads, in this browser's local storage. `false` keeps them until the next reload. |
+| `show_in_sidebar` | boolean | `true` | Dock the player in the sidebar. `false` shows it only where you add the [dashboard card](#dashboard-card), for example on a wall panel whose sidebar is hidden. |
+
+## Dashboard card
+
+The same player is also a dashboard card, so you can put it anywhere: a music view, a wall panel, a phone dashboard. It's in the same file, so there's nothing extra to install.
+
+```yaml
+type: custom:sidebar-mini-player-card
+entities:
+  - media_player.kitchen
+  - media_player.living_room
+```
+
+Or pick **Sidebar Mini Player** in the card picker.
+
+- `entity` or `entities` limit the card to those players. Leave them out to show whatever is playing, like the sidebar.
+- Every [configuration](#configuration) option works on the card too, for that card only: `show_volume: false`, `show_shuffle: true`, `accent_color`, `paused_timeout_minutes` and so on. Options you set globally in `window.sidebarMiniPlayerConfig` are the card's defaults. `position` and `show_in_sidebar` don't apply to a card.
+- Like the sidebar player, the card hides itself when nothing is playing or paused, and appears as soon as something starts.
+- It uses your theme's card background, border and corners, so it matches the cards around it.
+- The card is defined by the same file as the sidebar player. If you load the player with `extra_module_url`, the card is available on every dashboard. If you load it as a dashboard resource, it's available on dashboards too.
+
+On a wall panel, where the sidebar is hidden, set `show_in_sidebar: false` globally (or just leave the sidebar player, which costs very little) and add the card to the panel's dashboard.
 
 ## Gestures and controls
 
@@ -206,7 +229,7 @@ The `accent_color` config option, if set, takes priority over the theme variable
 
 **The player doesn't appear.**
 1. Is something actually **playing or paused**? Idle, on, standby and off players are hidden on purpose.
-2. Open the browser console. You should see `SIDEBAR-MINI-PLAYER v1.1.1`, and `window.__sidebarMiniPlayerLoaded` should return the version.
+2. Open the browser console. You should see `SIDEBAR-MINI-PLAYER v1.2.0`, and `window.__sidebarMiniPlayerLoaded` should return the version.
 3. After adding `extra_module_url`, **restart Home Assistant**, then hard-refresh or reset the app's frontend cache.
 4. Using the dashboard-resource route? Open any dashboard once in that tab.
 5. Check `include` / `exclude` and `paused_timeout_minutes` in your config.

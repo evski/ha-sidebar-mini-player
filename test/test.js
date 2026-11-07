@@ -869,6 +869,54 @@ function setup(layoutHtml, statesFile = FIXTURE, prep = null, opts = {}) {
     }
   }
 
+  // ---------- K: dashboard card (custom:sidebar-mini-player-card) ----------
+  {
+    const t = setup(real2026("light"));
+    await sleep(200);
+    const sidebarP = t.sb.shadowRoot.querySelector("sidebar-mini-player");
+    const mk = (config) => {
+      const c = t.d.createElement("sidebar-mini-player-card");
+      c.setConfig(config); t.d.body.appendChild(c); c.hass = t.hass; return c;
+    };
+    const inner = (c) => c.querySelector("sidebar-mini-player");
+    check("K1 card element defined and listed in window.customCards",
+      !!t.w.customElements.get("sidebar-mini-player-card") && (t.w.customCards || []).some((x) => x.type === "sidebar-mini-player-card"));
+    const all = mk({});
+    await sleep(50);
+    check("K2 card with no options shows the most recent player, styled as a card",
+      !!inner(all) && !inner(all).hidden && inner(all)._entity === "media_player.office" && inner(all).hasAttribute("card"), inner(all) && inner(all)._entity);
+    const one = mk({ entity: "media_player.kitchen_2", show_volume: false });
+    await sleep(50);
+    check("K3 entity: shows only that player", inner(one)._entity === "media_player.kitchen_2", inner(one)._entity);
+    check("K3 card option (show_volume false) applies to the card", inner(one).shadowRoot.querySelector(".focus .vol").hidden);
+    await sleep(1100); // let the sidebar player tick after the cards rendered
+    const g = t.w.sidebarMiniPlayer && t.w.sidebarMiniPlayer.config;
+    check("K4 card options don't leak into the sidebar player or the global config",
+      sidebarP && sidebarP._entity === "media_player.office" && !sidebarP._cfgOverride && g && g.show_volume === true && g.include.length === 0,
+      `${sidebarP && sidebarP._entity} show_volume=${g && g.show_volume} include=${g && g.include}`);
+    const none = mk({ entities: ["media_player.bedroom"] });
+    await sleep(50);
+    check("K5 card hides when none of its players is active", inner(none).hidden);
+    t.states["media_player.bedroom"] = { ...t.states["media_player.bedroom"], state: "playing", last_changed: new Date().toISOString() };
+    t.hass = { ...t.hass, states: { ...t.states } }; none.hass = t.hass;
+    await sleep(50);
+    check("K5 ...and shows when one starts playing", !inner(none).hidden && inner(none)._entity === "media_player.bedroom", inner(none)._entity);
+    let threw = false; try { t.d.createElement("sidebar-mini-player-card").setConfig(null); } catch (e) { threw = true; }
+    check("K6 invalid card config throws (the card editor shows the error)", threw);
+    one.remove(); await sleep(20);
+    check("K7 removed card stops its 1 s timer", one._timer === null);
+    t.w.close();
+
+    // show_in_sidebar: false -> no sidebar player, the card still works
+    const t2 = setup(real2026("light"), FIXTURE, null, { config: { show_in_sidebar: false } });
+    await sleep(1300);
+    check("K8 show_in_sidebar false: nothing injected into the sidebar", !t2.sb.shadowRoot.querySelector("sidebar-mini-player"));
+    const c2 = t2.d.createElement("sidebar-mini-player-card"); c2.setConfig({}); t2.d.body.appendChild(c2); c2.hass = t2.hass;
+    await sleep(50);
+    check("K8 ...but the dashboard card still shows", !c2.querySelector("sidebar-mini-player").hidden);
+    t2.w.close();
+  }
+
   // ---------- P: packaging / loading routes ----------
   {
     // extra_module_url timing: module runs BEFORE <home-assistant> exists; config defined later.

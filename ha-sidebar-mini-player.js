@@ -35,7 +35,7 @@
  *   Recommended - load on every page:
  *     frontend:
  *       extra_module_url:
- *         - /hacsfiles/ha-sidebar-mini-player/ha-sidebar-mini-player.js?v=1.1.1
+ *         - /hacsfiles/ha-sidebar-mini-player/ha-sidebar-mini-player.js?v=1.2.0
  *   (or /local/ha-sidebar-mini-player.js for a manual install), then restart
  *   Home Assistant and refresh the browser / reset the companion app's
  *   frontend cache. A plain Lovelace dashboard resource also works, but then
@@ -116,7 +116,7 @@
 
   /** Custom element tag + version (keep VERSION in sync with package.json and CHANGELOG.md). */
   const TAG = "sidebar-mini-player";
-  const VERSION = "1.1.1";
+  const VERSION = "1.2.0";
 
   // Loaded twice (e.g. extra_module_url AND a dashboard resource, or two
   // different URLs) -> the second copy does nothing.
@@ -169,6 +169,9 @@
     show_repeat: false,
     /** Keep dismissals across reloads (this browser's localStorage). false = until reload. */
     remember_dismissed: true,
+    /** Dock the player in the sidebar. false = only show it where you add the dashboard card
+     *  (custom:sidebar-mini-player-card), e.g. on wall panels whose sidebar is hidden. */
+    show_in_sidebar: true,
   });
   const POSITIONS = ["bottom", "top"];
 
@@ -575,6 +578,27 @@
   // The player element. Own shadow root -> our CSS can't leak into the sidebar
   // and the sidebar's CSS can't break ours. Theme variables still inherit.
   // --------------------------------------------------------------------------
+  /**
+   * Run fn with an element's own configuration (the dashboard card's options)
+   * swapped in for the global one. The helpers above read the module-level
+   * CFG / INCLUDE_RE / EXCLUDE_RE / cache, so the card swaps them for the
+   * duration of a render and restores them after. Synchronous, so nothing else
+   * can run in between. Elements without an override use the global config.
+   */
+  function withCfg(el, fn) {
+    const o = el && el._cfgOverride;
+    if (!o) return fn();
+    const saved = [CFG, INCLUDE_RE, EXCLUDE_RE, cache.states, cache.count, cache.ids];
+    CFG = o.cfg; INCLUDE_RE = o.inc; EXCLUDE_RE = o.exc;
+    cache.states = o.cache.states; cache.count = o.cache.count; cache.ids = o.cache.ids;
+    try {
+      return fn();
+    } finally {
+      o.cache.states = cache.states; o.cache.count = cache.count; o.cache.ids = cache.ids;
+      [CFG, INCLUDE_RE, EXCLUDE_RE, cache.states, cache.count, cache.ids] = saved;
+    }
+  }
+
   class SidebarMiniPlayer extends HTMLElement {
     constructor() {
       super();
@@ -605,6 +629,17 @@
             background: var(--sidebar-background-color, var(--card-background-color, inherit));
           }
           :host([hidden]) { display: none !important; }
+          /* As a dashboard card: look like the theme's other cards, no sidebar margins. */
+          :host([card]) {
+            --smp-card-bg: var(--sidebar-mini-player-card-background, var(--ha-card-background, var(--card-background-color, rgba(127,127,127,0.12))));
+          }
+          :host([card]) .wrap {
+            margin: 0;
+            border: var(--ha-card-border-width, 1px) solid var(--ha-card-border-color, var(--divider-color, rgba(127,127,127,0.2)));
+            box-shadow: var(--ha-card-box-shadow, none);
+            color: var(--primary-text-color);
+          }
+          :host([card]) .mini, :host([card]) .more { margin-left: 0; margin-right: 0; }
           [hidden] { display: none !important; } /* our own rules (e.g. display:flex) must not beat the hidden attribute */
           /* Card look with breathing room - 8px from the sidebar edges and
              from the items above/below, 8-10px inner padding, theme card radius,
@@ -972,7 +1007,7 @@
       const now = (ev) => (ev && ev.timeStamp) || performance.now();
       const excluded = (target) => !!(target && target.closest && target.closest(".vol, input"));
       const begin = (src, x, y, ev, extra) => {
-        if (!CFG.swipe_to_dismiss) return null;
+        if (!(this._cfgOverride ? this._cfgOverride.cfg : CFG).swipe_to_dismiss) return null;
         const id = entityOf();
         if (!id) return null;
         return Object.assign({ src, x0: x, y0: y, mode: "pending", dx: 0, id, samples: [{ x, t: now(ev) }] }, extra);
@@ -1215,6 +1250,10 @@
 
     /** Called by the controller every tick with the current hass + collapsed flag. */
     update(hass, collapsed) {
+      withCfg(this, () => this._update(hass, collapsed));
+    }
+
+    _update(hass, collapsed) {
       this._hass = hass;
       this._applyConfig();
       if (collapsed !== this._collapsed) {
@@ -1245,6 +1284,10 @@
     }
 
     _render() {
+      return withCfg(this, () => this._renderNow());
+    }
+
+    _renderNow() {
       // Never re-render while a card is being
       // swiped (1 s tick / state updates could re-order, remove or re-fill the
       // card under the finger). end() unfreezes and renders. Capped by
@@ -1487,6 +1530,95 @@
   if (!customElements.get(TAG)) customElements.define(TAG, SidebarMiniPlayer);
 
   // --------------------------------------------------------------------------
+  // DASHBOARD CARD: custom:sidebar-mini-player-card
+  // --------------------------------------------------------------------------
+  /**
+   * The same player as a dashboard card you can put anywhere. Options are the
+   * global options (window.sidebarMiniPlayerConfig) with any card options on
+   * top, plus two shorthands:
+   *   entity:   media_player.kitchen          (show only this player)
+   *   entities: [media_player.a, media_player.b]
+   * "position" and "show_in_sidebar" don't apply to a card and are ignored.
+   * Like the sidebar player, the card hides itself when nothing is playing.
+   */
+  const CARD_TAG = "sidebar-mini-player-card";
+  const CARD_ONLY_KEYS = ["type", "entity", "entities", "view_layout", "grid_options", "layout_options", "visibility"];
+
+  class SidebarMiniPlayerCard extends HTMLElement {
+    constructor() {
+      super();
+      this._hass = null;
+      this._timer = null;
+      this._player = document.createElement(TAG);
+      this._player.setAttribute("card", "");
+    }
+
+    setConfig(config) {
+      if (!config || typeof config !== "object" || Array.isArray(config)) {
+        throw new Error("sidebar-mini-player-card: invalid configuration");
+      }
+      const global = window.sidebarMiniPlayerConfig;
+      const user = { ...(global && typeof global === "object" && !Array.isArray(global) ? global : {}) };
+      for (const [k, v] of Object.entries(config)) if (!CARD_ONLY_KEYS.includes(k)) user[k] = v;
+      delete user.position; delete user.show_in_sidebar;
+      const only = [].concat(config.entities || [], config.entity || []).filter((x) => typeof x === "string" && x);
+      if (only.length) user.include = only;
+      const cfg = resolveConfig(user);
+      this._player._cfgOverride = {
+        cfg,
+        inc: cfg.include.map(toRegex),
+        exc: cfg.exclude.map(toRegex),
+        cache: { states: null, count: -1, ids: [] },
+      };
+      this._tick();
+    }
+
+    set hass(hass) {
+      this._hass = hass;
+      this._tick();
+    }
+
+    connectedCallback() {
+      if (this._player.parentNode !== this) this.appendChild(this._player);
+      // 1 s tick for the progress bar and the paused timeout, only while on screen.
+      if (!this._timer) this._timer = setInterval(() => this._tick(), TICK_MS);
+      this._tick();
+    }
+
+    disconnectedCallback() {
+      clearInterval(this._timer);
+      this._timer = null;
+    }
+
+    _tick() {
+      if (!this._hass || !this._player._cfgOverride) return;
+      try {
+        this._player.update(this._hass, false);
+      } catch (err) {
+        console.warn(`[${CARD_TAG}] update error`, err);
+      }
+    }
+
+    getCardSize() { return 2; }
+
+    getGridOptions() { return { columns: 12, min_columns: 6, rows: "auto" }; }
+
+    static getStubConfig() { return {}; }
+  }
+
+  if (!customElements.get(CARD_TAG)) customElements.define(CARD_TAG, SidebarMiniPlayerCard);
+  window.customCards = window.customCards || [];
+  if (!window.customCards.some((c) => c.type === CARD_TAG)) {
+    window.customCards.push({
+      type: CARD_TAG,
+      name: "Sidebar Mini Player",
+      description: "The now-playing mini player as a dashboard card: artwork, controls, progress and volume for whatever is playing.",
+      preview: false,
+      documentationURL: "https://github.com/evski/ha-sidebar-mini-player#dashboard-card",
+    });
+  }
+
+  // --------------------------------------------------------------------------
   // Controller: finds hass + the sidebar, injects the player, keeps it updated.
   // --------------------------------------------------------------------------
   let player = null;          // our <sidebar-mini-player> element
@@ -1677,6 +1809,10 @@
 
   /** Make sure the player lives in the CURRENT sidebar (it can be replaced). */
   function ensureInjected() {
+    if (!CFG.show_in_sidebar) {
+      if (player && player.isConnected) player.remove();
+      return false;
+    }
     const sb = findSidebar();
     if (!sb || !sb.shadowRoot) return false;
     if (sidebar === sb && inRightSpot(sb.shadowRoot)) return true;
